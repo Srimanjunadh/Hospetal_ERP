@@ -13,6 +13,7 @@ from app.modules.hospitals import router as hospitals_router
 
 from app.modules.inventory import router as inventory_router
 from app.modules.clinical_nodes import router as clinical_router
+from app.modules.specialized import router as specialized_router
 
 router = APIRouter()
 
@@ -28,3 +29,4 @@ router.include_router(hospital_router, prefix="/hospital", tags=["Hospital Manag
 router.include_router(ambulance_router, prefix="/ambulance", tags=["Emergency & Ambulance"])
 router.include_router(inventory_router, prefix="/inventory", tags=["Inventory & Pharmacy Stock"])
 router.include_router(clinical_router, prefix="/clinical", tags=["Clinical Node Operations"])
+router.include_router(specialized_router, prefix="/specialized", tags=["Specialized Clinical Units"])

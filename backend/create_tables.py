@@ -1,6 +1,13 @@
 import asyncio
 from app.db.session import engine, Base
-from app.models.models import User, Doctor, Appointment, Prescription, AmbulanceRequest, InventoryItem, PharmacyOrder, PatientVitals, MedicalReport, Hospital, DoctorSchedule, StaffSchedule
+from app.models.models import (
+    User, Doctor, Appointment, Prescription, AmbulanceRequest, 
+    InventoryItem, PharmacyOrder, PatientVitals, Hospital, 
+    DoctorSchedule, StaffSchedule, LabTest, Admission, 
+    SystemAlert, Billing, WardBed, Ambulance, 
+    NurseMedicineRequest, BloodBank, BloodRequest, 
+    SurgicalSchedule, PatientRiskScore
+)
 
 async def create_tables():
     async with engine.begin() as conn:

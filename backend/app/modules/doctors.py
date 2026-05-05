@@ -94,7 +94,7 @@ async def get_doctor(doctor_id: int, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Doctor not found")
     
     if not d.user:
-         raise HTTPException(status_code=500, detail="Doctor user profile missing")
+        raise HTTPException(status_code=500, detail="Doctor user profile missing")
 
     return {
         "id": d.id,

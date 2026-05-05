@@ -86,12 +86,34 @@ async def update_patient_vitals(data: VitalsUpdate, db: AsyncSession = Depends(g
     await db.commit()
     return {"status": "Vitals Updated & Doctor Notified"}
 
+class AlertCreate(BaseModel):
+    hospital_id: int
+    from_user_id: int
+    to_user_id: Optional[int] = None
+    to_role: Optional[str] = None
+    message: str
+    type: Optional[str] = "notification"
+
+@router.post("/alerts")
+async def create_alert(data: AlertCreate, db: AsyncSession = Depends(get_db)):
+    alert = SystemAlert(
+        hospital_id=data.hospital_id,
+        from_user_id=data.from_user_id,
+        to_user_id=data.to_user_id,
+        to_role=data.to_role,
+        message=data.message,
+        type=data.type
+    )
+    db.add(alert)
+    await db.commit()
+    return {"status": "Alert Created"}
+
 @router.post("/emergency")
 async def send_emergency_alert(data: dict, db: AsyncSession = Depends(get_db)):
     alert = SystemAlert(
         hospital_id=data['hospital_id'],
         from_user_id=data['from_user_id'],
-        to_role='doctor', # Broadcast to doctors
+        to_role='doctor', 
         message=data['message'],
         type="emergency"
     )
@@ -457,6 +479,7 @@ async def get_pharmacy_nurse_requests(hospital_id: int, db: AsyncSession = Depen
             "patient_name": r.patient.name,
             "patient_id": r.patient_id,
             "nurse_name": r.nurse.name,
+            "nurse_id": r.nurse_id,
             "medicines": r.medicines,
             "status": r.status,
             "created_at": r.created_at

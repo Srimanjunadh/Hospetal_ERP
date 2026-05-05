@@ -258,3 +258,53 @@ class NurseMedicineRequest(Base):
 
     patient = relationship("User", foreign_keys=[patient_id])
     nurse = relationship("User", foreign_keys=[nurse_id])
+
+class BloodBank(Base):
+    __tablename__ = "blood_bank"
+    id = Column(Integer, primary_key=True, index=True)
+    hospital_id = Column(Integer, ForeignKey("hospitals.id"))
+    blood_group = Column(String) # A+, A-, B+, B-, AB+, AB-, O+, O-
+    units_available = Column(Float, default=0.0)
+    last_updated = Column(DateTime(timezone=True), onupdate=func.now(), server_default=func.now())
+
+class BloodRequest(Base):
+    __tablename__ = "blood_requests"
+    id = Column(Integer, primary_key=True, index=True)
+    hospital_id = Column(Integer, ForeignKey("hospitals.id"))
+    patient_id = Column(Integer, ForeignKey("users.id"))
+    doctor_id = Column(Integer, ForeignKey("doctors.id"))
+    blood_group = Column(String)
+    units_required = Column(Float)
+    urgency = Column(String, default="NORMAL") # NORMAL, URGENT, CRITICAL
+    status = Column(String, default="PENDING") # PENDING, APPROVED, DISPATCHED, COMPLETED
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    patient = relationship("User")
+    doctor = relationship("Doctor")
+
+class SurgicalSchedule(Base):
+    __tablename__ = "surgical_schedules"
+    id = Column(Integer, primary_key=True, index=True)
+    hospital_id = Column(Integer, ForeignKey("hospitals.id"))
+    patient_id = Column(Integer, ForeignKey("users.id"))
+    doctor_id = Column(Integer, ForeignKey("doctors.id"))
+    ot_room_number = Column(String)
+    procedure_name = Column(String)
+    scheduled_at = Column(DateTime)
+    status = Column(String, default="SCHEDULED") # SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED
+    checklist_status = Column(JSON, default={}) # WHO Surgical Safety Checklist items
+    notes = Column(Text, nullable=True)
+
+    patient = relationship("User")
+    doctor = relationship("Doctor")
+
+class PatientRiskScore(Base):
+    __tablename__ = "patient_risk_scores"
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(Integer, ForeignKey("users.id"))
+    score_value = Column(Float) # 0 to 10
+    risk_level = Column(String) # LOW, MODERATE, HIGH, CRITICAL
+    indicators = Column(JSON) # Contributing factors (vitals, age, etc.)
+    calculated_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    patient = relationship("User")
